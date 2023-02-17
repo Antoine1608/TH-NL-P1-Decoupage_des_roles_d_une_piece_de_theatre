@@ -1,2 +1,2 @@
 # RepTheatre
-Outil pour répartir les rôles d'une pièce d théâtre
+Outil pour répartir les rôles dans une pièce de théâtre
