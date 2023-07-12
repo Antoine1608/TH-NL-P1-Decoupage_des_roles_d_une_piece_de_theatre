@@ -1,2 +1,2 @@
 # RepTheatre
-Outil pour répartir les rôles dans une pièce de théâtre
+NLP-tokenisation d'une pièce de théâtre pour répartir les rôles
