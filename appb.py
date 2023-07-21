@@ -7,16 +7,11 @@
 import pandas as pd
 import numpy as np
 import time
-
 import io
 import base64
 import matplotlib
-#matplotlib.use('agg')
 matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
-
-
-
 import json
 from typing import List
 from fastapi import FastAPI
@@ -65,35 +60,15 @@ def treat(lnom, lnom_comp, lstage):
 
     # In[4]:
 
-
-    # Punctuation removal function
-    def remove_punct(text):
-        """
-            Remove the punctuation
-        """
-        return re.sub(r'[]!"$%&\'()*+,./:;=#@?[\\^_`{|}~-]+', "", text)
-
-
     # In[5]:
 
 
     # On enlève la ponctuation et on tokenize
     #from nltk.tokenize import word_tokenize
     from nltk.tokenize import RegexpTokenizer
-    for c in range(0,df.shape[1]):
-        for r in range(0,len(df)):
-            if type(df.iloc[r,c]) == str :
-                tokenizer = RegexpTokenizer(r'\w+')
-                df.iloc[r,c] = tokenizer.tokenize(df.iloc[r,c])
-                #df.iloc[r,c] = word_tokenize(df.iloc[r,c])
-
-    # On enlève la ponctuation et on tokenize
-    from nltk.tokenize import word_tokenize
-    for c in range(0,df.shape[1]):
-        for r in range(0,len(df)):
-            if type(df.iloc[r,c]) == str :
-                df.iloc[r,c] = remove_punct(df.iloc[r,c])
-                df.iloc[r,c] = word_tokenize(df.iloc[r,c])
+    tokenizer = RegexpTokenizer(r'\w+')
+    df = df.applymap(lambda x : tokenizer.tokenize(x) if type(x) == str else x)
+    
     # In[6]:
 
 
