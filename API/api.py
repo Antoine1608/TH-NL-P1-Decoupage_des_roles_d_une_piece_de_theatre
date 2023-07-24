@@ -2,6 +2,7 @@
 # coding: utf-8
 
 #général
+import os
 import pandas as pd
 import numpy as np
 import time
@@ -25,28 +26,25 @@ from pydantic import BaseModel
 # Modèle d'input pour l'API
 '''
 {
-"lnom_": ["argan", "béline", "angélique", "cléante", "béralde", "louison", "toinette"],
-"lnom_comp" : ["monsieur", "thomas"],
-"lstage" : ["ACTE", "Scène", "prologue", "INTERMÈDE"]
+  "lnom_": ["argan", "béline", "angélique", "cléante", "béralde", "louison", "toinette"],
+  "lnom_comp_": ["monsieur", "thomas"],
+  "lstage_": ["ACTE", "Scène", "prologue", "INTERMÈDE"]
 }
 '''
 
 # Initialisation de l'application FastAPI
-app = FastAPI()
+api = FastAPI()
 graphe_path = r"C:\Users\John\Desktop\Formation\TH-NL-P1-decoupage_des_roles_d_une_piece_de_theatre\graphe.png"
-
+styled_xls_path = r"C:\Users\John\Desktop\Formation\TH-NL-P1-decoupage_des_roles_d_une_piece_de_theatre\df_color.xlsx"
+print("37")
 # Fonction de Traitement
 def treat(lnom, lnom_comp, lstage):
- 
-
+    print("40") 
     #traitement texte
     import re
 
     #visualisation
     import matplotlib.pyplot as plt
-
-
-    # In[2]:
 
     #données d'entrée
     df=pd.read_fwf(r"C:\Users\John\Desktop\Formation\TH-NL-P1-decoupage_des_roles_d_une_piece_de_theatre\data\Le_Malade_imaginaire.txt",header=None,sep=" ")
@@ -160,7 +158,8 @@ def treat(lnom, lnom_comp, lstage):
 
     # Indices des lignes à colorer
     indices_to_color = [data[r][0] for r in range(1, len(data))]
-
+    print('indices_to_color : ',indices_to_color)
+    print("159")
     # Création de la fonction de mise en forme pour colorer les lignes spécifiques
     def highlight_row(row):
         if row.name in indices_to_color:
@@ -172,14 +171,15 @@ def treat(lnom, lnom_comp, lstage):
     styled_df = df.style.apply(highlight_row, axis=1)
 
     # Affichage du DataFrame stylisé
-    #styled_df.to_excel("df_color.xlsx")
+    styled_df.to_excel(styled_xls_path)
+    os.startfile(styled_xls_path)
 
     # Maintenant on met les acte et les scènes dans les lignes au même niveau que les personnages dans data_
     # Si la ligne contient Acte on copie cette données dans les cellules du dessous jusqu'à rencontrer une 
-    # nouvelle cellule différente de 0
+    ## nouvelle cellule différente de 0
     for r in range(1,len(data_)):
         if data_[r][1] != 0:
-            i = r+1
+            #i = r+1
             try:
                 while data_[i][1] == 0:
                     data_[i][1] = data_[r][1]
@@ -211,13 +211,14 @@ def treat(lnom, lnom_comp, lstage):
 
     # Calculer le total par personnage
     total_par_personnage = series.groupby(level='Personnage').sum()
-
+    print("210")
     return[series, total_par_personnage]
 
 # L'API proprement dite
-@app.get("/")
+@api.get("/")
 def read_root():
     return {"message": "Bienvenue dans l'API de répartion de rôles"}
+    print("217")
 
 class Input(BaseModel):
     #url_:str
@@ -225,19 +226,20 @@ class Input(BaseModel):
     lnom_comp_:list
     lstage_:list        
 
-@app.post("/traitement")
+@api.post("/traitement")
 def graphe(input:Input):
     data_in = input.dict()
   
     lnom = data_in['lnom_']
     lnom_comp = data_in['lnom_comp_']
     lstage = data_in['lstage_']
-
-    series = treat(lnom, lnom_comp, lstage)[0]
-    total_par_personnage = treat(lnom, lnom_comp, lstage)[1]
-    
+    print("231")
+    traitement_ = treat(lnom, lnom_comp, lstage)
+    series = traitement_(lnom, lnom_comp, lstage)[0]
+    total_par_personnage = traitement_(lnom, lnom_comp, lstage)[1]
+    print("235")
     # Création du graphique en boules initial
-
+    print("237")
     # Sauvegarder l'image en mémoire BytesIO
     buffer = io.BytesIO()
     fig, ax = plt.subplots(figsize=(15, 6))
@@ -284,19 +286,21 @@ def graphe(input:Input):
 # l'image sera enregistrée sous le chemin spécifié dans la variable graphe_path.
 
 # Visualisation du graphe
-@app.get("/show/")
+@api.get("/show/")
 async def read_file():
     from fastapi import FastAPI, File, UploadFile
     from fastapi.responses import FileResponse
- 
+    print("289")
     # get file path
     file = f"{graphe_path}"
-     
+    print("292") 
     return FileResponse(file)
 
 if __name__ == "__main__":
     t1 = time.time()
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+    print("297")
+    uvicorn.run(api, host="127.0.0.1", port=8000)
+    print("298")
     print("temps de traitement = ", time.time()-t1)
 
 
