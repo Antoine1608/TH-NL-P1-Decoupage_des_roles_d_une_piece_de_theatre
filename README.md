@@ -1,6 +1,6 @@
 # Répartir les rôles dans une pièces de théâtre
 Si vous faites du théâtre vous avez peut-être déjà été confronté à ce problème mathématique insoluble: comment répartir équitablement les rôles dans une équipe de x acteurs alors qu'il y a y personnages dans la pièces.
-J'ai créé cette API en python qui facilite ce calcul
+J'ai créé cette API en python qui facilite ce calcul.
 
 # Comment ça fonctionne ?
 1-Cloner le dépôt sur vore ordinateur
