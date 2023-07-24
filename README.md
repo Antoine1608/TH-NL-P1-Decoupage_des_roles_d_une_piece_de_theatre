@@ -35,7 +35,7 @@ et vous devriez voir apparaître le message 200 Successfull Response
 et vous devriez voir appraître le graphe suivant
 <img width="738" alt="image" src="https://github.com/Antoine1608/TH-NL-P1-decoupage_des_roles_d_une_piece_de_theatre/assets/75375490/23988653-0366-4941-b4cf-7185951e83ad">
 
-et voilà pour le moment! La suite et en cours de développement
+Et voilà pour le moment! Je travaille sur la suite
 
 
 
