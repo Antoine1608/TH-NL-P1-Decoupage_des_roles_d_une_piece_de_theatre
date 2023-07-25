@@ -153,8 +153,7 @@ def treat(lnom, lnom_comp, lstage):
                 index = i
                 break
         data_[index][-1] = nb
-    
-    #on va colorer les lignes caractéristiques détectées et voir ce que ça donne sur un doc excel
+    # on va colorer les lignes caractéristiques détectées et voir ce que ça donne sur un doc excel
 
     # Indices des lignes à colorer
     indices_to_color = [data[r][0] for r in range(1, len(data))]
@@ -179,7 +178,7 @@ def treat(lnom, lnom_comp, lstage):
     ## nouvelle cellule différente de 0
     for r in range(1,len(data_)):
         if data_[r][1] != 0:
-            #i = r+1
+            i = r+1
             try:
                 while data_[i][1] == 0:
                     data_[i][1] = data_[r][1]
@@ -212,6 +211,7 @@ def treat(lnom, lnom_comp, lstage):
     # Calculer le total par personnage
     total_par_personnage = series.groupby(level='Personnage').sum()
     print("210")
+    print(data_)
     return[series, total_par_personnage]
 
 # L'API proprement dite
@@ -235,15 +235,15 @@ def graphe(input:Input):
     lstage = data_in['lstage_']
     print("231")
     traitement_ = treat(lnom, lnom_comp, lstage)
-    series = traitement_(lnom, lnom_comp, lstage)[0]
-    total_par_personnage = traitement_(lnom, lnom_comp, lstage)[1]
+    series = traitement_[0]
+    total_par_personnage = traitement_[1]   
     print("235")
     # Création du graphique en boules initial
     print("237")
     # Sauvegarder l'image en mémoire BytesIO
     buffer = io.BytesIO()
     fig, ax = plt.subplots(figsize=(15, 6))
-      
+    print (series.index.get_level_values('Acte'))  
     ax.scatter(series.index.get_level_values('Personnage'), series.index.get_level_values('Acte'),
                s=series.values, alpha=0.7)
 
