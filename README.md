@@ -34,7 +34,7 @@ et vous devriez voir apparaître le message 200 Successfull Response
   Show,
   Try it out,
   Execute
-et vous devriez voir appraître le graphe suivant:
+et vous devriez voir apparaître le graphe suivant:
 <img width="738" alt="image" src="https://github.com/Antoine1608/TH-NL-P1-decoupage_des_roles_d_une_piece_de_theatre/assets/75375490/23988653-0366-4941-b4cf-7185951e83ad">
 
 Et voilà pour le moment! Je travaille sur la suite
