@@ -67,18 +67,17 @@ def treat(lnom, lnom_comp, lstage):
 
     # ## 2-Extraction des données
 
-    # Création d'un tableau réduit aux lignes étapes et personnages. Les lignes sont identifiées par leur index
+    # Création d'un tableau data réduit aux lignes étapes et personnages. Les lignes sont identifiées par leur index
     data = [['Index', 'Acte', 'Scène', 'Personnage', 'Nb de mots']]
-    
-
-    # On itère le tableau data ligne à ligne
-    for r in range(0, len(df)):
+        
+    # On itère le DataFrame df en utilisant iterrows() pour remplir data
+    for index, row in df.iterrows():
         # si elle contient un mot de lnom ou lstage
         for nom in lnom + lstage + lnom_comp:
             try:
-                if nom in df["cleaned"][r][0:1]:
+                if nom in row["cleaned"][0:1]:
                     # on appende la ligne
-                    data.append([r,df["cleaned"][r][0:2],0,0,0])
+                    data.append([index, row["cleaned"][0:2], 0, 0, 0])
             except:
                 continue
 
@@ -93,7 +92,7 @@ def treat(lnom, lnom_comp, lstage):
 
     # TEST : petite vérification sur les actes et intermèdes
     ext = [sous_liste for sous_liste in data if any(isinstance(item, list) and ('INTERMÈDE' in item or 'ACTE' in item) for item in sous_liste if isinstance(item, (str, list)))]
-    ext
+    assert len(ext) == 3, print('les trois actes n\'ont pas été détectés')
 
     # on cherche l'index du df de la première ligne qui contient 'ACTE' dans data
     start_index = data.index([303, ['ACTE', 'PREMIER'], 0, 0, 0])
