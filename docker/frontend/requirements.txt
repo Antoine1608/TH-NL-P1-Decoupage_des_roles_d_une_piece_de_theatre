@@ -1,0 +1,15 @@
+streamlit
+pandas
+typing
+requests
+bs4
+openpyxl
+nltk
+matplotlib-inline==0.1.6
+openpyxl==3.1.2
+pickleshare==0.7.5
+pydantic==2.3.0
+pydantic_core==2.6.3
+fastapi==0.103.1
+matplotlib==3.8.0
+uvicorn==0.23.2
