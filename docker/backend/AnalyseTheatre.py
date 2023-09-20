@@ -95,6 +95,7 @@ class AnalyseTheatre:
         indices_to_color = range(0, len(data))
 
         # Création de la fonction de mise en forme pour colorer les lignes spécifiques
+        '''        
         def highlighter(row):
             if df_.iloc[row.name, 1] =='structure':
                 return ['background-color: yellow'] * len(row)
@@ -113,7 +114,7 @@ class AnalyseTheatre:
         except PermissionError :
             print("Le fichier est déjà ouvert.")
 
-
+        '''
         # In[15]:
 
 
@@ -283,6 +284,7 @@ class AnalyseTheatre:
         indices_to_color = range(0, len(data))
 
         # Création de la fonction de mise en forme pour colorer les lignes spécifiques
+        '''
         def highlighter(row):
             if df_.iloc[row.name, 1] =='structure':
                 return ['background-color: yellow'] * len(row)
@@ -300,6 +302,7 @@ class AnalyseTheatre:
             os.startfile("df_color.xlsx")
         except PermissionError :
             print("Le fichier est déjà ouvert.")
+        '''
 
 
         # In[15]:

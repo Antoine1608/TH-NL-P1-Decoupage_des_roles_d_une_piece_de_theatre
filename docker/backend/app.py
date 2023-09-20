@@ -19,6 +19,7 @@ from pydantic import BaseModel
 from AnalyseTheatre import AnalyseTheatre
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
+import re
 
 ################################################################
 
@@ -494,24 +495,24 @@ def visualisation(df, genre, lstage=None, lnom=None):
         absi = series.index.get_level_values('Personnage')
         ordo = series.index.get_level_values('Acte')
 
-     # Créez une instance de la classe GraphResponse avec les données
-    response_data = GraphResponse(
-        absi=absi,
-        ordo=ordo,
-        vale=series.values.tolist(),
-        tota=total_par_personnage.to_dict()
-    )
-    print("tota : ", total_par_personnage, "type :", type (total_par_personnage))
-    # Renvoyez la réponse JSON avec les données
-    #return JSONResponse(content=response_data.dict())
-
-    content = jsonable_encoder(response_data)
-    return JSONResponse(content=content)
+         # Créez une instance de la classe GraphResponse avec les données
+        response_data = GraphResponse(
+            absi=absi,
+            ordo=ordo,
+            vale=series.values.tolist(),
+            tota=total_par_personnage.to_dict()
+            )
+        print("tota : ", total_par_personnage, "type :", type (total_par_personnage))
+        # Renvoyez la réponse JSON avec les données
+        #return JSONResponse(content=response_data.dict())
+    
+        content = jsonable_encoder(response_data)
+        return JSONResponse(content=content)
 
         #with open('data_visu.pickle', 'wb') as f:
         #    pickle.dump({'absi':absi, 'ordo':ordo, 'vale':series.values,'tota': total_par_personnage}, f)
 
-'''
+        
         fig, ax = plt.subplots(figsize=(15, 6))
 
         ax.scatter(series.index.get_level_values('Personnage'), series.index.get_level_values('Acte'),
@@ -550,9 +551,9 @@ def visualisation(df, genre, lstage=None, lnom=None):
         # Affichage du graphique
         plt.show()
         #print("temps de traitement = ", time.time()-t1)
-'''
-'''
-    if genre == 'correction':
+    
+
+    elif genre == 'correction':
         # # Filtrage des éléments de visualisation
 
         # In[48]:
@@ -567,7 +568,8 @@ def visualisation(df, genre, lstage=None, lnom=None):
 
 
         data_select = data[data['Acte'].isin(list_stage) & data['Personnage'].isin(list_pers)]
-
+        print(data_select)
+        
         # On va lui rajouter une colonne 'acteur'
         data_select['Acteur'] = ""
         data_select
@@ -591,8 +593,26 @@ def visualisation(df, genre, lstage=None, lnom=None):
 
         # Calculer le total par personnage
         total_par_personnage = series.groupby(level='Personnage').sum()
+        
+        # définir les données du graphes
+        absi = series.index.get_level_values('Personnage')
+        ordo = series.index.get_level_values('Acte')
 
+         # Créez une instance de la classe GraphResponse avec les données
+        response_data = GraphResponse(
+            absi=absi,
+            ordo=ordo,
+            vale=series.values.tolist(),
+            tota=total_par_personnage.to_dict()
+            )
+        print("tota : ", total_par_personnage, "type :", type (total_par_personnage))
+        # Renvoyez la réponse JSON avec les données
+        #return JSONResponse(content=response_data.dict())
+    
+        content = jsonable_encoder(response_data)
+        return JSONResponse(content=content)
         # Création du graphique en boules initial
+        
         fig, ax = plt.subplots(figsize=(15, 6))
         ax.scatter(series.index.get_level_values('Personnage'), series.index.get_level_values('Acte'),
                    s=series.values, alpha=0.7)
@@ -627,8 +647,7 @@ def visualisation(df, genre, lstage=None, lnom=None):
         
         print("temps de traitement = ", time.time()-t1)
 
-
-    if genre == 'répartition' :
+    elif genre == 'répartition' :
         # # Attribution des rôles
 
         # In[48]:
@@ -736,7 +755,7 @@ def visualisation(df, genre, lstage=None, lnom=None):
 
         # Affichage du graphique
         plt.show()
-'''
+
 ################################################################
 
 #instantiation de FastApi
@@ -775,6 +794,10 @@ else:
 
 class Input(BaseModel):
     url_:str
+
+class Inputb(BaseModel):
+    url_:str
+    lnom_:str
 
 @app.get("/")
 def read_root():
@@ -821,19 +844,122 @@ def visu(input:Input):
 
     return visualisation(df, genre="général")
 
-
-
 #   la structure dramatique
+@app.post("/visu_str")
+def visu_str(input:Input):
+    import os
+    text = input.dict()
+
+    # Récupérez l'URL du fichier texte de la pièce qui nous intéresse
+    file_url = text['url_']
+    print('file_url OK :', file_url)
+
+    # Faites une requête HTTP pour télécharger le contenu du fichier texte
+    file_response = requests.get(file_url)
+    print('file_response OK')
+
+    # Vérifiez si le téléchargement a réussi (statut code 200)
+    if file_response.status_code == 200:
+        # Enregistrez le contenu dans un fichier local (par exemple "doc.txt")
+        #print('current directory : ',os.getcwd())
+        doc = os.path.basename(file_url)
+        with open(doc, 'wb') as file:
+            file.write(file_response.content)
+        print("Le fichier a été téléchargé avec succès.\n")
+    else:
+        pass
+        print("Le téléchargement du fichier a échoué avec le code de statut :", file_response.status_code)
+
+    df=pd.read_fwf(doc,header=None,sep=" ",encoding = "ISO-8859-1")
+    #analyser = AnalyseTheatre()
+    #analyser.visualisation(df, genre="général")
+    #visualisation(df, genre="général")
+    structure = AnalyseTheatre()
+    return structure.liste_stage(df)
+    
 #   la liste des personnage
+@app.post("/visu_per")
+def visu_per(input:Input):
+    import os
+    text = input.dict()
+
+    # Récupérez l'URL du fichier texte de la pièce qui nous intéresse
+    file_url = text['url_']
+    print('file_url OK :', file_url)
+
+    # Faites une requête HTTP pour télécharger le contenu du fichier texte
+    file_response = requests.get(file_url)
+    print('file_response OK')
+
+    # Vérifiez si le téléchargement a réussi (statut code 200)
+    if file_response.status_code == 200:
+        # Enregistrez le contenu dans un fichier local (par exemple "doc.txt")
+        #print('current directory : ',os.getcwd())
+        doc = os.path.basename(file_url)
+        with open(doc, 'wb') as file:
+            file.write(file_response.content)
+        print("Le fichier a été téléchargé avec succès.\n")
+    else:
+        pass
+        print("Le téléchargement du fichier a échoué avec le code de statut :", file_response.status_code)
+
+    df=pd.read_fwf(doc,header=None,sep=" ",encoding = "ISO-8859-1")
+    #analyser = AnalyseTheatre()
+    #analyser.visualisation(df, genre="général")
+    #visualisation(df, genre="général")
+    personnages = AnalyseTheatre()
+    return personnages.liste_perso(df)
+
 #   enregistrer le texte labellisé et coloré
 
 #   après correction/personnalisation des listes - appui bouton 3
 
+
 #   appui bouton 3 => lancer l'analyse personnalisée
+@app.post("/visu_perso")
+def visu_perso(input:Inputb):
+    import os
+    text = input.dict()
+
+    # Récupérez l'URL du fichier texte de la pièce qui nous intéresse
+    file_url = text['url_']
+    print('file_url OK :', file_url)
+
+    # Faites une requête HTTP pour télécharger le contenu du fichier texte
+    file_response = requests.get(file_url)
+    print('file_response OK')
+
+    # Vérifiez si le téléchargement a réussi (statut code 200)
+    if file_response.status_code == 200:
+        # Enregistrez le contenu dans un fichier local (par exemple "doc.txt")
+        #print('current directory : ',os.getcwd())
+        doc = os.path.basename(file_url)
+        with open(doc, 'wb') as file:
+            file.write(file_response.content)
+        print("Le fichier a été téléchargé avec succès.\n")
+    else:
+        pass
+        print("Le téléchargement du fichier a échoué avec le code de statut :", file_response.status_code)
+
+    df=pd.read_fwf(doc,header=None,sep=" ",encoding = "ISO-8859-1")
+    #analyser = AnalyseTheatre()
+    #analyser.visualisation(df, genre="général")
+    #visualisation(df, genre="général")
+
+    # on récupère la liste des personnages retenus
+    chaine = text['lnom_']
+    l_nom = re.findall(r'\b\w+(?:\s+\w+)*\b', chaine)
+    l_nom = [nom.strip(', ') for nom in l_nom]
+    #print(l_nom)   
+    print("l_nom est de type : ",type(l_nom))
+    return visualisation(df, genre="correction", lnom=l_nom)
+    #return l_nom
 #   et enregistrer le tableau pour la répartition des rôles
 
 #   après modification du tableau de répartition des rôle - appui bouton 4
 #   appui bouton 4 => graphique
+
+
 
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8000)
