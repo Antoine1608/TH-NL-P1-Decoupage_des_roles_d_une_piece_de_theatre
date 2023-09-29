@@ -10,6 +10,8 @@ import json
 import requests
 import time
 import re
+import FrontendFunc
+
 
 st.set_option('deprecation.showPyplotGlobalUse', False)
 
@@ -19,37 +21,25 @@ def main():
     global repartition
     global data_visu_correc
 
-    #fastapi_url = "http://127.0.0.1:8000/visu_gen"  # Update with your FastAPI server URL LOCAL
+# Choisir en mettant entre triple apostrophes la deuxième option ou pas
+
+# LOCAL
+    fastapi_url = "http://127.0.0.1:8000/visu_gen"  # Update with your FastAPI server URL LOCAL    
+    fastapi_struct = "http://127.0.0.1:8000/visu_str"  # Update with your FastAPI server URL => en LOCAL  
+    fastapi_per = "http://127.0.0.1:8000/visu_per"  # Update with your FastAPI server URL => en LOCAL    
+    fastapi_correc = "http://127.0.0.1:8000/visu_perso"  # Update with your FastAPI server URL LOCAL    
+
+# DOCKER
     fastapi_url = "http://fastapi:8000/visu_gen"  # Update with your FastAPI server URL DOCKER
-
-    #fastapi_struct = "http://127.0.0.1:8000/visu_str"  # Update with your FastAPI server URL => en LOCAL
     fastapi_struct = "http://fastapi:8000/visu_str"  # Update with your FastAPI server URL => pour DOCKER
-
-    #fastapi_per = "http://127.0.0.1:8000/visu_per"  # Update with your FastAPI server URL => en LOCAL
     fastapi_per = "http://fastapi:8000/visu_per"  # Update with your FastAPI server URL => pour DOCKER
-    
-    #fastapi_correc = "http://127.0.0.1:8000/visu_perso"  # Update with your FastAPI server URL LOCAL
     fastapi_correc = "http://fastapi:8000/visu_perso"  # Update with your FastAPI server URL DOCKER
     
     # Titre de la page
     st.title("Répartir les rôles sur une pièce de théâtre")
-
-    values = ['http://www.theatre-classique.fr/pages/txt/MOLIERE_MALADEIMAGINAIRE.txt','http://www.theatre-classique.fr/pages/txt/ABEILLE_ARGELIE.txt',
-     'http://www.theatre-classique.fr/pages/txt/ABEILLE_CORIOLAN.txt',
-     'http://www.theatre-classique.fr/pages/txt/ABEILLE_LYNCEE.txt',
-     'http://www.theatre-classique.fr/pages/txt/ABOUT_RISETTE.txt',
-     'http://www.theatre-classique.fr/pages/txt/ADENIS_HOMMEQUINEPEUTPASSIFFLER.txt',
-     'http://www.theatre-classique.fr/pages/txt/AIGUEBERRE_AVAREAMOUREUX.txt',
-     'http://www.theatre-classique.fr/pages/txt/AIGUEBERRE_PANETDORIS.txt',
-     'http://www.theatre-classique.fr/pages/txt/AIGUEBERRE_POLIXENE.txt',
-     'http://www.theatre-classique.fr/pages/txt/AIGUEBERRE_PROLOGUE.txt',
-     'http://www.theatre-classique.fr/pages/txt/ALAINLEGRAND_EPREUVERECIPROQUE.txt',
-     'http://www.theatre-classique.fr/pages/txt/ALLAINVAL_ECOLEDESBOURGEOIS.txt',
-     'http://www.theatre-classique.fr/pages/txt/ALLAINVAL_HIVER.txt',
-     'http://www.theatre-classique.fr/pages/txt/ALLAIS_BONBOUGRE.txt',
-     'http://www.theatre-classique.fr/pages/txt/ALLAIS_MECONTENT.txt',
-     'http://www.theatre-classique.fr/pages/txt/ANCELOT-ARAGO_PAPILLOTES.txt',
-     'http://www.theatre-classique.fr/pages/txt/ANCELOT-AUGER_SEDUCTION.txt']
+    
+    values = FrontendFunc.import_text()
+    
     titre = st.sidebar.selectbox(
         "Veuillez sélectionner une pièce de théâtre",
         values)
