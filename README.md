@@ -1,15 +1,15 @@
 # Répartir les rôles dans une pièces de théâtre
-Si vous faites du théâtre vous avez peut-être déjà été confronté à ce problème mathématique insoluble: comment répartir équitablement les rôles dans une troupe de x acteurs alors qu'il y a y personnages dans la pièces.
-J'ai créé cette API en python qui facilite ce calcul.
+Comment répartir équitablement les rôles dans une troupe de x acteurs alors qu'il y a y personnages dans la pièces ?
+Cette API en python facilite le calcul.
 
 # Comment ça fonctionne ?
-1-Cloner le dépôt sur vore ordinateur
+1-Clonez le dépôt sur votre ordinateur
 
-2-Dans la CLI lancer la commande cd `TH-NL-P1-decoupage_des_roles_d_une_piece_de_theatre`
+2-Dans la CLI lancez la commande `cd TH-NL-P1-decoupage_des_roles_d_une_piece_de_theatre`
 
-3-A la suite lancer la commande `python API\api.py`
+3-A la suite lancez la commande `python API\api.py`
 
-4-Vous devriez un message du type:
+4-Vous devriez avoir un message du type:
 
 <img width="497" alt="image" src="https://github.com/Antoine1608/TH-NL-P1-decoupage_des_roles_d_une_piece_de_theatre/assets/75375490/9fa6e241-99c3-45ef-a43c-562752bd8b58"> 
 
@@ -34,7 +34,7 @@ et vous devriez voir apparaître le message 200 Successfull Response
   Show,
   Try it out,
   Execute
-et vous devriez voir appraître le graphe suivant:
+et vous devriez voir apparaître le graphe suivant:
 <img width="738" alt="image" src="https://github.com/Antoine1608/TH-NL-P1-decoupage_des_roles_d_une_piece_de_theatre/assets/75375490/23988653-0366-4941-b4cf-7185951e83ad">
 
 Et voilà pour le moment! Je travaille sur la suite
