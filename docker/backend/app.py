@@ -31,6 +31,16 @@ class GraphResponse(BaseModel):
     vale: list
     tota: dict
 
+class GraphResponse2(BaseModel):
+    absi: list
+    ordo: list
+    vale: list
+    tota: dict
+    datact: dict
+
+list_pers_c = []
+liste_stage_r = []
+
 def visualisation(df, genre, lstage=None, lnom=None):
 
     if genre not in ('général', 'correction', 'répartition'):
@@ -479,14 +489,6 @@ def visualisation(df, genre, lstage=None, lnom=None):
 
     if genre == 'général':
         series = data.groupby(['Acte','Personnage'])['Nb de mots'].sum()
-        #print('data', data)
-        #print('series', series)
-
-
-        # ## Visualisation
-
-        # In[47]:
-
 
         # Calculer le total par personnage
         total_par_personnage = series.groupby(level='Personnage').sum()
@@ -503,93 +505,29 @@ def visualisation(df, genre, lstage=None, lnom=None):
             tota=total_par_personnage.to_dict()
             )
         print("tota : ", total_par_personnage, "type :", type (total_par_personnage))
-        # Renvoyez la réponse JSON avec les données
-        #return JSONResponse(content=response_data.dict())
     
         content = jsonable_encoder(response_data)
         return JSONResponse(content=content)
 
-        #with open('data_visu.pickle', 'wb') as f:
-        #    pickle.dump({'absi':absi, 'ordo':ordo, 'vale':series.values,'tota': total_par_personnage}, f)
-
-        
-        fig, ax = plt.subplots(figsize=(15, 6))
-
-        ax.scatter(series.index.get_level_values('Personnage'), series.index.get_level_values('Acte'),
-                   s=series.values, alpha=0.7)
-
-        # Ajouter des boules pour le total par personnage
-        for personnage, total in total_par_personnage.items():
-            ax.scatter(personnage, "Total", s=total, c='green', alpha=0.7)#, label=f'Total {personnage}')
-
-        # Configuration des axes et du titre
-        ax.set_xlabel('Personnage')
-        ax.set_ylabel('Acte')
-        ax.set_title('Graphique en boules - Nb de mots')
-        plt.xticks(rotation=45)
-
-        # Vérification
-        #print(series.index.get_level_values('Personnage')) 
-        #print(series.index.get_level_values('Acte'))
-
-        # Afficher la valeur dans la boule pour le graphique initial
-        for x, y, val in zip(series.index.get_level_values('Personnage'), series.index.get_level_values('Acte'), series.values):
-            ax.annotate(str(val), (x, y), textcoords="offset points", xytext=(0, 10), ha='center')
-
-        # Afficher la valeur dans la boule pour le total par personnage
-        for personnage, total in total_par_personnage.items():
-            ax.annotate(str(total), (personnage, "Total"), textcoords="offset points", xytext=(0, 10), ha='center')
-
-        # Légende pour les boules du total par personnage
-        ax.legend()
-
-        # Sérialisation du graphe
-        import pickle
-        with open('mon_graphe.pickle', 'wb') as f:
-            pickle.dump(fig, f)            
-
-        # Affichage du graphique
-        plt.show()
-        #print("temps de traitement = ", time.time()-t1)
-    
-
     elif genre == 'correction':
-        # # Filtrage des éléments de visualisation
+        # Filtrage des éléments de visualisation
 
-        # In[48]:
+        # ATTENTION : on définit cette variable glbale pour pouvoir l'utiliser avec la fonction visualisation genre="répartition"
+        global list_pers_c
 
-
-        list_pers = lnom#['ANGÉLIQUE', 'ARGAN', 'BÉLINE', 'LE NOTAIRE', 'TOINETTE', 'ANGÉLIQUE','BÉRALDE', 'CLÉANTE', 'LOUIS', 'MONSIEUR DIAFOIRUS',                 'THOMAS DIAFOIRUS',  'MONSIEUR FLEURANT', 'MONSIEUR PURGON', 'LOUISON']
+        list_pers_c = lnom#['ANGÉLIQUE', 'ARGAN', 'BÉLINE', 'LE NOTAIRE', 'TOINETTE', 'ANGÉLIQUE','BÉRALDE', 'CLÉANTE', 'LOUIS', 'MONSIEUR DIAFOIRUS',                 'THOMAS DIAFOIRUS',  'MONSIEUR FLEURANT', 'MONSIEUR PURGON', 'LOUISON']
 
         list_stage = [i for i in lstage if 'ACTE' in i]#['ACTE I','ACTE II', 'ACTE III']
 
-
-        # In[49]:
-
-
-        data_select = data[data['Acte'].isin(list_stage) & data['Personnage'].isin(list_pers)]
-        print(data_select)
+        data_select = data[data['Acte'].isin(list_stage) & data['Personnage'].isin(list_pers_c)]
         
         # On va lui rajouter une colonne 'acteur'
         data_select['Acteur'] = ""
-        data_select
-
-
-        # In[54]:
-
 
         # On enregistre ce tableau au format csv
         data_select.to_csv("repartition.csv",index=False, sep=';')
 
-
-        # In[50]:
-
-
         series = data_select.groupby(['Acte','Personnage'])['Nb de mots'].sum()
-
-
-        # In[51]:
-
 
         # Calculer le total par personnage
         total_par_personnage = series.groupby(level='Personnage').sum()
@@ -599,162 +537,16 @@ def visualisation(df, genre, lstage=None, lnom=None):
         ordo = series.index.get_level_values('Acte')
 
          # Créez une instance de la classe GraphResponse avec les données
-        response_data = GraphResponse(
+        response_data = GraphResponse2(
             absi=absi,
             ordo=ordo,
             vale=series.values.tolist(),
-            tota=total_par_personnage.to_dict()
-            )
-        print("tota : ", total_par_personnage, "type :", type (total_par_personnage))
-        # Renvoyez la réponse JSON avec les données
-        #return JSONResponse(content=response_data.dict())
-    
+            tota=total_par_personnage.to_dict(),
+            datact=data_select.to_dict())
+        #print(response_data['data_'])
+        # Renvoyez la réponse JSON avec les données => personnages, actes, nb de mots, total, data_select
         content = jsonable_encoder(response_data)
-        return JSONResponse(content=content)
-        # Création du graphique en boules initial
-        
-        fig, ax = plt.subplots(figsize=(15, 6))
-        ax.scatter(series.index.get_level_values('Personnage'), series.index.get_level_values('Acte'),
-                   s=series.values, alpha=0.7)
-
-        # Ajouter des boules pour le total par personnage
-        for personnage, total in total_par_personnage.items():
-            ax.scatter(personnage, "Total", s=total, c='green', alpha=0.7)#, label=f'Total {personnage}')
-
-        # Configuration des axes et du titre
-        ax.set_xlabel('Personnage')
-        ax.set_ylabel('Acte')
-        ax.set_title('Graphique en boules - Nb de mots')
-        plt.xticks(rotation=45)
-
-        # Vérification
-        #print(series.index.get_level_values('Personnage')) 
-        #print(series.index.get_level_values('Acte'))
-
-        # Afficher la valeur dans la boule pour le graphique initial
-        for x, y, val in zip(series.index.get_level_values('Personnage'), series.index.get_level_values('Acte'), series.values):
-            ax.annotate(str(val), (x, y), textcoords="offset points", xytext=(0, 10), ha='center')
-
-        # Afficher la valeur dans la boule pour le total par personnage
-        for personnage, total in total_par_personnage.items():
-            ax.annotate(str(total), (personnage, "Total"), textcoords="offset points", xytext=(0, 10), ha='center')
-
-        # Légende pour les boules du total par personnage
-        ax.legend()
-
-        # Affichage du graphique
-        plt.show()
-        
-        print("temps de traitement = ", time.time()-t1)
-
-    elif genre == 'répartition' :
-        # # Attribution des rôles
-
-        # In[48]:
-
-
-        list_pers = lnom#['ANGÉLIQUE', 'ARGAN', 'BÉLINE', 'LE NOTAIRE', 'TOINETTE', 'ANGÉLIQUE','BÉRALDE', 'CLÉANTE', 'LOUIS', 'MONSIEUR DIAFOIRUS',                 'THOMAS DIAFOIRUS',  'MONSIEUR FLEURANT', 'MONSIEUR PURGON', 'LOUISON']
-
-        list_stage = [i for i in lstage if 'ACTE' in i]#['ACTE I','ACTE II', 'ACTE III']
-
-
-        # In[49]:
-
-
-        data_select = data[data['Acte'].isin(list_stage) & data['Personnage'].isin(list_pers)]
-
-        # In[52]:
-
-
-        # On va partir du tableau suivant
-        data_select
-
-
-        # In[53]:
-
-
-        # On va lui rajouter une colonne 'acteur'
-        data_select['Acteur'] = ""
-        data_select
-
-
-        # In[55]:
-
-
-        # Après l'avoir modifié on le rappelle
-        try :
-            df_ = pd.read_csv("repartition.csv", sep=';',encoding = "ISO-8859-1")
-        except (PermissionError, FileNotFoundError) as e:
-            print(f"Une erreur s'est produite avec le fichier repartition : {e}")
-
-
-        # In[56]:
-
-
-        df_
-
-
-        # In[57]:
-
-
-        # On trace le graphe à partir des nouvelles infos
-        # le x et le y
-        list_acteur = df_['Acteur'].unique().tolist()
-     
-
-        # In[58]:
-
-
-        # le tableau des données filtrées
-        df_filtered = df_[df_['Acte'].isin(list_stage) & df_['Acteur'].isin(list_acteur)]
-
-
-        # In[59]:
-
-
-        # On groupe par Acte et Acteur et on somme le nombre de mots
-        series = df_filtered.groupby(['Acte','Acteur'])['Nb de mots'].sum()
-
-
-        # In[60]:
-
-
-        # Calculer le total par acteur
-        total_par_acteur = series.groupby(level='Acteur').sum()
-        
-        # Création du graphique en boules initial
-        
-        fig, ax = plt.subplots(figsize=(15, 6))
-        ax.scatter(series.index.get_level_values('Acteur'), series.index.get_level_values('Acte'),
-                   s=series.values, alpha=0.7)
-
-        # Ajouter des boules pour le total par acteur
-        for acteur, total in total_par_acteur.items():
-            ax.scatter(acteur, "Total", s=total, c='green', alpha=0.7)
-
-        # Configuration des axes et du titre
-        ax.set_xlabel('Acteur')
-        ax.set_ylabel('Acte')
-        ax.set_title('Graphique en boules - Nb de mots')
-        plt.xticks(rotation=45)
-
-        # Vérification
-        print(series.index.get_level_values('Acteur')) 
-        print(series.index.get_level_values('Acte'))
-
-        # Afficher la valeur dans la boule pour le graphique initial
-        for x, y, val in zip(series.index.get_level_values('Acteur'), series.index.get_level_values('Acte'), series.values):
-            ax.annotate(str(val), (x, y), textcoords="offset points", xytext=(0, 10), ha='center')
-
-        # Afficher la valeur dans la boule pour le total par acteur
-        for acteur, total in total_par_acteur.items():
-            ax.annotate(str(total), (acteur, "Total"), textcoords="offset points", xytext=(0, 10), ha='center')
-
-        # Légende pour les boules du total par acteur
-        ax.legend()
-
-        # Affichage du graphique
-        plt.show()
+        return JSONResponse(content=content)      
 
 ################################################################
 
@@ -799,16 +591,17 @@ class Inputb(BaseModel):
     url_:str
     lnom_:str
 
+class Inputc(BaseModel):
+    fil_:str
+
 @app.get("/")
 def read_root():
     return {"message": "Bienvenue dans l'API de répartion de rôles"}
-    print("217")
-  
+    print("217") 
 
 #   choisir un texte dans le menu déroulant - appui bouton 1
 
 #   choisir un texte perso - appui bouton 2
-
 
 #   appui bouton  1 ou 2 => lancer l'analyse brute et afficher :
 #   le graphique
@@ -819,16 +612,13 @@ def visu(input:Input):
 
     # Récupérez l'URL du fichier texte de la pièce qui nous intéresse
     file_url = text['url_']
-    print('file_url OK :', file_url)
 
     # Faites une requête HTTP pour télécharger le contenu du fichier texte
     file_response = requests.get(file_url)
-    print('file_response OK')
 
     # Vérifiez si le téléchargement a réussi (statut code 200)
     if file_response.status_code == 200:
         # Enregistrez le contenu dans un fichier local (par exemple "doc.txt")
-        #print('current directory : ',os.getcwd())
         doc = os.path.basename(file_url)
         with open(doc, 'wb') as file:
             file.write(file_response.content)
@@ -838,9 +628,6 @@ def visu(input:Input):
         print("Le téléchargement du fichier a échoué avec le code de statut :", file_response.status_code)
 
     df=pd.read_fwf(doc,header=None,sep=" ",encoding = "ISO-8859-1")
-    #analyser = AnalyseTheatre()
-    #analyser.visualisation(df, genre="général")
-    #visualisation(df, genre="général")
 
     return visualisation(df, genre="général")
 
@@ -852,7 +639,6 @@ def visu_str(input:Input):
 
     # Récupérez l'URL du fichier texte de la pièce qui nous intéresse
     file_url = text['url_']
-    print('file_url OK :', file_url)
 
     # Faites une requête HTTP pour télécharger le contenu du fichier texte
     file_response = requests.get(file_url)
@@ -861,7 +647,6 @@ def visu_str(input:Input):
     # Vérifiez si le téléchargement a réussi (statut code 200)
     if file_response.status_code == 200:
         # Enregistrez le contenu dans un fichier local (par exemple "doc.txt")
-        #print('current directory : ',os.getcwd())
         doc = os.path.basename(file_url)
         with open(doc, 'wb') as file:
             file.write(file_response.content)
@@ -871,9 +656,7 @@ def visu_str(input:Input):
         print("Le téléchargement du fichier a échoué avec le code de statut :", file_response.status_code)
 
     df=pd.read_fwf(doc,header=None,sep=" ",encoding = "ISO-8859-1")
-    #analyser = AnalyseTheatre()
-    #analyser.visualisation(df, genre="général")
-    #visualisation(df, genre="général")
+
     structure = AnalyseTheatre()
     return structure.liste_stage(df)
     
@@ -885,7 +668,6 @@ def visu_per(input:Input):
 
     # Récupérez l'URL du fichier texte de la pièce qui nous intéresse
     file_url = text['url_']
-    print('file_url OK :', file_url)
 
     # Faites une requête HTTP pour télécharger le contenu du fichier texte
     file_response = requests.get(file_url)
@@ -894,7 +676,6 @@ def visu_per(input:Input):
     # Vérifiez si le téléchargement a réussi (statut code 200)
     if file_response.status_code == 200:
         # Enregistrez le contenu dans un fichier local (par exemple "doc.txt")
-        #print('current directory : ',os.getcwd())
         doc = os.path.basename(file_url)
         with open(doc, 'wb') as file:
             file.write(file_response.content)
@@ -904,9 +685,7 @@ def visu_per(input:Input):
         print("Le téléchargement du fichier a échoué avec le code de statut :", file_response.status_code)
 
     df=pd.read_fwf(doc,header=None,sep=" ",encoding = "ISO-8859-1")
-    #analyser = AnalyseTheatre()
-    #analyser.visualisation(df, genre="général")
-    #visualisation(df, genre="général")
+
     personnages = AnalyseTheatre()
     return personnages.liste_perso(df)
 
@@ -914,8 +693,8 @@ def visu_per(input:Input):
 
 #   après correction/personnalisation des listes - appui bouton 3
 
-
 #   appui bouton 3 => lancer l'analyse personnalisée
+
 @app.post("/visu_perso")
 def visu_perso(input:Inputb):
     import os
@@ -932,7 +711,6 @@ def visu_perso(input:Inputb):
     # Vérifiez si le téléchargement a réussi (statut code 200)
     if file_response.status_code == 200:
         # Enregistrez le contenu dans un fichier local (par exemple "doc.txt")
-        #print('current directory : ',os.getcwd())
         doc = os.path.basename(file_url)
         with open(doc, 'wb') as file:
             file.write(file_response.content)
@@ -942,24 +720,19 @@ def visu_perso(input:Inputb):
         print("Le téléchargement du fichier a échoué avec le code de statut :", file_response.status_code)
 
     df=pd.read_fwf(doc,header=None,sep=" ",encoding = "ISO-8859-1")
-    #analyser = AnalyseTheatre()
-    #analyser.visualisation(df, genre="général")
-    #visualisation(df, genre="général")
 
     # on récupère la liste des personnages retenus
     chaine = text['lnom_']
     l_nom = re.findall(r'\b\w+(?:\s+\w+)*\b', chaine)
     l_nom = [nom.strip(', ') for nom in l_nom]
-    #print(l_nom)   
-    print("l_nom est de type : ",type(l_nom))
+
     return visualisation(df, genre="correction", lnom=l_nom)
-    #return l_nom
+
 #   et enregistrer le tableau pour la répartition des rôles
 
 #   après modification du tableau de répartition des rôle - appui bouton 4
 #   appui bouton 4 => graphique
-
-
+    # Après l'avoir modifié on le rappelle   
 
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8000)
