@@ -16,7 +16,7 @@ import pandas as pd
 import numpy as np
 import uvicorn
 from pydantic import BaseModel
-from AnalyseTheatre import AnalyseTheatre
+from BackendFunc import AnalyseTheatre
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 import re
