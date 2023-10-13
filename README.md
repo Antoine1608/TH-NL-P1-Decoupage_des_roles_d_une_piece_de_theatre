@@ -13,7 +13,7 @@ Cette API en python facilite le calcul.
 
 <img width="497" alt="image" src="https://github.com/Antoine1608/TH-NL-P1-decoupage_des_roles_d_une_piece_de_theatre/assets/75375490/9fa6e241-99c3-45ef-a43c-562752bd8b58"> 
 
-5-Saisissez l'adresse `127.0.0.1:8888/docs` dans votre explorateur internet
+5-Saisissez l'adresse `127.0.0.1:8000/docs` dans votre explorateur internet
 
 6-Vous devriez avoir la fenêtre suivante qui s'ouvre: 
 
