@@ -1,44 +1,52 @@
-# Répartir les rôles dans une pièces de théâtre
-Comment répartir équitablement les rôles dans une troupe de x acteurs alors qu'il y a y personnages dans la pièces ?
-Cette API en python facilite le calcul.
+# Répartir les rôles dans une pièce de théâtre
+Comment répartir équitablement les rôles dans une troupe de x acteurs alors qu'il y a y personnages dans la pièce ? Comment faire si un rôle est partagé entre plusieurs acteurs ?
+Cette API en python déployable avec docker-compose facilite le calcul.
 
 # Comment ça fonctionne ?
-1-Clonez le dépôt sur votre ordinateur
+Prérequis : 
 
-2-Dans la CLI lancez la commande `cd TH-NL-P1-decoupage_des_roles_d_une_piece_de_theatre`
+-Les OS Windows, Mac OS, Linux sont supportés
 
-3-A la suite lancez la commande `python API\api.py`
+-Docker-Desktop
 
-4-Vous devriez avoir un message du type:
+<img width="133" alt="docker-logo" src="https://github.com/Antoine1608/TH-NL-P1-decoupage_des_roles_d_une_piece_de_theatre/assets/75375490/f8b2524b-0bf5-4347-abb7-a5fa7bad1189">
 
-<img width="497" alt="image" src="https://github.com/Antoine1608/TH-NL-P1-decoupage_des_roles_d_une_piece_de_theatre/assets/75375490/9fa6e241-99c3-45ef-a43c-562752bd8b58"> 
+-Git
 
-5-Saisissez l'adresse `127.0.0.1:8000/docs` dans votre explorateur internet
+1-Dans git bash lancez la commande `git clone https://github.com/Antoine1608/TH-NL-P1-decoupage_des_roles_d_une_piece_de_theatre.git` pour cloner le dépôt
 
-6-Vous devriez avoir la fenêtre suivante qui s'ouvre: 
+2-Lancez Docker Desktop
 
-<img width="926" alt="image" src="https://github.com/Antoine1608/TH-NL-P1-decoupage_des_roles_d_une_piece_de_theatre/assets/75375490/6b08a4c5-4cc2-4720-8b64-6ead202ac2d8">
+3-Dans la CLI lancez la commande `C:\Users\John\Desktop\TH-NL-P1-decoupage_des_roles_d_une_piece_de_theatre\docker>docker-compose up -d`
 
-7-Appuyez sur 
-  Traitement, 
-  Try it out, 
-  saisissez `{
-  "lnom_": ["argan", "béline", "angélique", "cléante", "béralde", "louison", "toinette"],
-  "lnom_comp_": ["monsieur", "thomas"],
-  "lstage_": ["ACTE", "Scène", "prologue", "INTERMÈDE"]
-}`, 
-  appuyez sur Execute
-et vous devriez voir apparaître le message 200 Successfull Response
+4-Saisissez l'adresse `http://localhost:8501` dans votre explorateur internet
 
-8-Appuyez ensuite sur 
-  Show,
-  Try it out,
-  Execute
-et vous devriez voir apparaître le graphe suivant:
-<img width="738" alt="image" src="https://github.com/Antoine1608/TH-NL-P1-decoupage_des_roles_d_une_piece_de_theatre/assets/75375490/23988653-0366-4941-b4cf-7185951e83ad">
+5-Vous devriez avoir l'écran suivant:
 
-Et voilà pour le moment! Je travaille sur la suite
+<img width="845" alt="image" src="https://github.com/Antoine1608/TH-NL-P1-decoupage_des_roles_d_une_piece_de_theatre/assets/75375490/f32cbe5c-712d-4b39-8e85-c99eda29937c">
 
+6-Sélectionnez une pièce dans le menu déroulant à gauche
 
+7-Appuyez sur le bouton `Répartition Personnages - Acte` et vous devriez voir apparaître un graphe de ce type:
 
+<img width="633" alt="image" src="https://github.com/Antoine1608/TH-NL-P1-decoupage_des_roles_d_une_piece_de_theatre/assets/75375490/97278232-0928-4e58-a8b7-22c47509ed10">
 
+8-Parmi les personnages mentionnés sur le graphe, sélectionnez ceux qui vous intéressent et entrez les dans une liste comme ceci par exemple (attention, respectez bien le format) :
+
+<img width="644" alt="image" src="https://github.com/Antoine1608/TH-NL-P1-decoupage_des_roles_d_une_piece_de_theatre/assets/75375490/3ee14e3f-19ae-43d0-88fe-aae2fc03c380">
+
+et appuyez sur `Entrée` 
+
+9-Appuyez ensuite sur `Répartition Personnages retenus - Acte` et vous devriez voir apparaître un graphe de ce type: 
+
+<img width="637" alt="image" src="https://github.com/Antoine1608/TH-NL-P1-decoupage_des_roles_d_une_piece_de_theatre/assets/75375490/7630e146-c1b8-4926-8a41-bd06538dd885">
+
+10-Choisir les acteurs pour chaque personnage dans chaque acte (il n'est pas nécessaire de remplir toutes les cases):
+
+<img width="662" alt="image" src="https://github.com/Antoine1608/TH-NL-P1-decoupage_des_roles_d_une_piece_de_theatre/assets/75375490/a1028d0c-ea7b-4f63-b8aa-6f00f7b77799">
+
+11-Puis appuyez sur `Répartition Acteurs - Acte` et vous devriez voir apparaître un graphe de ce type:
+
+<img width="631" alt="image" src="https://github.com/Antoine1608/TH-NL-P1-decoupage_des_roles_d_une_piece_de_theatre/assets/75375490/d48d2156-a350-4b61-a470-2ac62b1e763a">
+
+Et voilà ! A vous de jouer
