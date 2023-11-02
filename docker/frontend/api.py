@@ -30,10 +30,10 @@ def main():
     fastapi_correc = "http://127.0.0.1:8000/visu_perso"  # Update with your FastAPI server URL LOCAL    
 
 # DOCKER
-    #fastapi_url = "http://fastapi:8000/visu_gen"  # Update with your FastAPI server URL DOCKER
-    #fastapi_struct = "http://fastapi:8000/visu_str"  # Update with your FastAPI server URL => pour DOCKER
-    #fastapi_per = "http://fastapi:8000/visu_per"  # Update with your FastAPI server URL => pour DOCKER
-    #fastapi_correc = "http://fastapi:8000/visu_perso"  # Update with your FastAPI server URL DOCKER
+    fastapi_url = "http://fastapi:8000/visu_gen"  # Update with your FastAPI server URL DOCKER
+    fastapi_struct = "http://fastapi:8000/visu_str"  # Update with your FastAPI server URL => pour DOCKER
+    fastapi_per = "http://fastapi:8000/visu_per"  # Update with your FastAPI server URL => pour DOCKER
+    fastapi_correc = "http://fastapi:8000/visu_perso"  # Update with your FastAPI server URL DOCKER
     
     # Titre de la page
     st.title("Répartir les rôles sur une pièce de théâtre")
