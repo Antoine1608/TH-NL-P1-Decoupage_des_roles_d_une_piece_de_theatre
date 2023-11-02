@@ -1,13 +1,19 @@
 # Répartir les rôles dans une pièce de théâtre
 Comment répartir équitablement les rôles dans une troupe de x acteurs alors qu'il y a y personnages dans la pièce ? Comment faire si un rôle est partagé entre plusieurs acteurs ?
-Cette API en python déployable avec docker facilite le calcul.
+Cette API en python déployable avec docker-compose facilite le calcul.
 
 # Comment ça fonctionne ?
-Prérequis : avoir Docker-Compose installé. Les OS Windows, Mac OS, Linux sont supportés.
+Prérequis : 
 
-<img width="182" alt="image" src="https://github.com/Antoine1608/TH-NL-P1-decoupage_des_roles_d_une_piece_de_theatre/assets/75375490/d88605a7-c629-46cb-b015-84eba948f44a">
+-Les OS Windows, Mac OS, Linux sont supportés
 
-1-Sur git bash lancez la commande `git clone https://github.com/Antoine1608/TH-NL-P1-decoupage_des_roles_d_une_piece_de_theatre.git` pour cloner le dépôt
+-Docker-Desktop
+
+<img width="133" alt="docker-logo" src="https://github.com/Antoine1608/TH-NL-P1-decoupage_des_roles_d_une_piece_de_theatre/assets/75375490/f8b2524b-0bf5-4347-abb7-a5fa7bad1189">
+
+-Git
+
+1-Dans git bash lancez la commande `git clone https://github.com/Antoine1608/TH-NL-P1-decoupage_des_roles_d_une_piece_de_theatre.git` pour cloner le dépôt
 
 2-Lancez Docker Desktop
 
