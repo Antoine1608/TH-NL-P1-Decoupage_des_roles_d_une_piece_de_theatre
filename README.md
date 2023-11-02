@@ -41,7 +41,7 @@ et appuyez sur `Entrée`
 
 <img width="637" alt="image" src="https://github.com/Antoine1608/TH-NL-P1-decoupage_des_roles_d_une_piece_de_theatre/assets/75375490/7630e146-c1b8-4926-8a41-bd06538dd885">
 
-10-Choisir les acteurs pour chaque personnage dans chaque acte:
+10-Choisir les acteurs pour chaque personnage dans chaque acte (il n'est pas nécessaire de remplir toutes les cases):
 
 <img width="662" alt="image" src="https://github.com/Antoine1608/TH-NL-P1-decoupage_des_roles_d_une_piece_de_theatre/assets/75375490/a1028d0c-ea7b-4f63-b8aa-6f00f7b77799">
 
@@ -49,4 +49,4 @@ et appuyez sur `Entrée`
 
 <img width="631" alt="image" src="https://github.com/Antoine1608/TH-NL-P1-decoupage_des_roles_d_une_piece_de_theatre/assets/75375490/d48d2156-a350-4b61-a470-2ac62b1e763a">
 
-Et voilà une troupe de théâtre où chacun connaît sa charge de travail
+Et voilà ! A vous de jouer
