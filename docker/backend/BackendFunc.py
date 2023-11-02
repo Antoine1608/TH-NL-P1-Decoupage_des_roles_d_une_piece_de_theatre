@@ -2,6 +2,7 @@ import pandas as pd
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
+import requests
 
 class GraphResponse(BaseModel):
     absi: list
@@ -19,6 +20,48 @@ class GraphResponse2(BaseModel):
 list_pers_c = []
 liste_stage_r = []
 
+def import_txt(input):
+    import os
+    text = input.dict()
+
+    # Récupérez l'URL du fichier texte de la pièce qui nous intéresse
+    file_url = text['url_']
+
+    # Faites une requête HTTP pour télécharger le contenu du fichier texte
+    file_response = requests.get(file_url)
+
+    # Vérifiez si le téléchargement a réussi (statut code 200)
+    if file_response.status_code == 200:
+        # Enregistrez le contenu dans un fichier local (par exemple "doc.txt")
+        doc = os.path.basename(file_url)
+        with open(doc, 'wb') as file:
+            file.write(file_response.content)
+        print("Le fichier a été téléchargé avec succès.\n")
+    else:
+        pass
+        print("Le téléchargement du fichier a échoué avec le code de statut :", file_response.status_code)
+
+    df=pd.read_fwf(doc,header=None,sep=" ",encoding = "ISO-8859-1")
+    return df
+
+def supp_intro(df):
+# Supposons que vous ayez un DataFrame appelé df
+    try:
+        # Trouver l'index de la première ligne dont le texte commence par 'ACTE I'
+        index_to_keep = df[df.loc[:,0].str.startswith('ACTE I')].index[0]
+        
+        # Si l'index est différent de zéro, supprimer les lignes au-dessus
+        if index_to_keep != 0:
+            df = df[index_to_keep:]
+            return df
+        
+        # Réinitialiser les index après la suppression
+        df.reset_index(drop=True, inplace=True)
+        
+        # Maintenant, df contient les lignes après la première ligne commençant par 'ACTE I'
+    except:
+        return None
+
 def liste_stage(df):
 
     df_ = df.copy()
@@ -31,7 +74,6 @@ def liste_stage(df):
                 df_.at[r,c] = tokenizer.tokenize(df_.iloc[r,c])
 
     # A ce state chaque cellule de df_ contient une liste de mots sans ponctutation
-    df_.head()
 
     # Rassembler les lignes dans une colonne "cleaned"
     from functools import reduce
@@ -44,8 +86,6 @@ def liste_stage(df):
 
     # On réduit df_ à une colonne qui contient la liste de tous les mots de la ligne
     df_ = pd.DataFrame(df_["cleaned"])
-    df_.head()
-
 
     # # Labelliser
 
@@ -54,7 +94,6 @@ def liste_stage(df):
 
     # Réinitialiser l'index du DataFrame 
     df_.reset_index(drop=True, inplace=True)
-    df_.head()
 
     # On rajoute une colonne label avec les valeurs structure ou note   
     def label(x):
@@ -69,39 +108,13 @@ def liste_stage(df):
 
     # A ce stade df_ contient deux colonnes : 'cleaned' et 'label' qui contient structure, note ou None
 
-    # On va colorer les lignes labellisées structure ou note et voir ce que ça donne sur un doc excel
     data = df_.copy()
-    # Indices des lignes à colorer
-    indices_to_color = range(0, len(data))
-
-    # Création de la fonction de mise en forme pour colorer les lignes spécifiques
-    '''        
-    def highlighter(row):
-        if df_.iloc[row.name, 1] =='structure':
-            return ['background-color: yellow'] * len(row)
-        elif df_.iloc[row.name, 1] =='note':
-            return ['background-color: red'] * len(row)
-        else:
-            return [''] * len(row) 
-
-    # Application de la fonction de mise en forme au DataFrame
-    styled_df_ = df_.style.apply(highlighter, axis=1)
-
-    # Affichage du DataFrame stylisé
-    try : 
-        styled_df_.to_excel("df_color.xlsx",index=False)
-        os.startfile("df_color.xlsx")
-    except PermissionError :
-        print("Le fichier est déjà ouvert.")
-
-    '''
-
+    
     # Supprimer les lignes où la col 'cleaned' contient une liste vide
     df_ = df_[df_['cleaned'].apply(lambda x: len(x) > 0)]
 
     # Réinitialiser l'index du DataFrame 
     df_.reset_index(drop=True, inplace=True)
-    df_.head()
 
     # Supprimer les lignes labellisées note
     df_ = df_[df_['label']!='note'] 
@@ -143,7 +156,6 @@ def liste_perso(df):
                 df_.at[r,c] = tokenizer.tokenize(df_.iloc[r,c])
 
     # A ce state chaque cellule de df_ contient une liste de mots sans ponctutation
-    df_.head()
 
     # Rassembler les lignes dans une colonne "cleaned"
     from functools import reduce
@@ -156,17 +168,14 @@ def liste_perso(df):
 
     # On réduit df_ à une colonne qui contient la liste de tous les mots de la ligne
     df_ = pd.DataFrame(df_["cleaned"])
-    df_.head()
 
-
-    # # Labelliser
+    # # Labeliser
 
     # Supprimer les lignes où la col 'cleaned' contient une liste vide
     df_ = df_[df_['cleaned'].apply(lambda x: len(x) > 0)]
 
     # Réinitialiser l'index du DataFrame 
     df_.reset_index(drop=True, inplace=True)
-    df_.head()
 
     # On rajoute une colonne label avec les valeurs structure ou note   
     def label(x):
@@ -180,33 +189,7 @@ def liste_perso(df):
     df_['label'] = df_['cleaned'].map(label)
 
     # A ce stade df_ contient deux colonnes : 'cleaned' et 'label' qui contient structure, note ou None
-    df_
-
-    # On va colorer les lignes labellisées structure ou note et voir ce que ça donne sur un doc excel
-    data = df_.copy()
-    # Indices des lignes à colorer
-    indices_to_color = range(0, len(data))
-
-    # Création de la fonction de mise en forme pour colorer les lignes spécifiques
-    '''
-    def highlighter(row):
-        if df_.iloc[row.name, 1] =='structure':
-            return ['background-color: yellow'] * len(row)
-        elif df_.iloc[row.name, 1] =='note':
-            return ['background-color: red'] * len(row)
-        else:
-            return [''] * len(row) 
-
-    # Application de la fonction de mise en forme au DataFrame
-    styled_df_ = df_.style.apply(highlighter, axis=1)
-
-    # Affichage du DataFrame stylisé
-    try : 
-        styled_df_.to_excel("df_color.xlsx",index=False)
-        os.startfile("df_color.xlsx")
-    except PermissionError :
-        print("Le fichier est déjà ouvert.")
-    '''
+    
     # Supprimer les lignes où la col 'cleaned' contient une liste vide
     df_ = df_[df_['cleaned'].apply(lambda x: len(x) > 0)]
 
@@ -217,7 +200,6 @@ def liste_perso(df):
     df_ = df_[df_['label']!='note'] 
 
     # A ce stade df_ est complètement nettoyé
-    df_.head()
 
     # Liste des éléments de structure
     col_cleaned_struct = df_.loc[df_['label'] == 'structure', 'cleaned']
@@ -270,7 +252,6 @@ def visualisation(df, genre, lstage=None, lnom=None):
 
     # On réduit df_ à une colonne qui contient la liste de tous les mots de la ligne
     df_ = pd.DataFrame(df_["cleaned"])
-    df_.head()
 
     # # Labelliser
 
@@ -291,33 +272,6 @@ def visualisation(df, genre, lstage=None, lnom=None):
 
     df_['label'] = df_['cleaned'].map(label)
 
-    # On va colorer les lignes labellisées structure ou note et voir ce que ça donne sur un doc excel
-    
-    # Indices des lignes à colorer
-    indices_to_color = range(0, len(df_))
-
-    # Création de la fonction de mise en forme pour colorer les lignes spécifiques
-    '''
-    def highlighter(row):
-        if df_.iloc[row.name, 1] =='structure':
-            return ['background-color: yellow'] * len(row)
-        elif df_.iloc[row.name, 1] =='note':
-            return ['background-color: red'] * len(row)
-        else:
-            return [''] * len(row) 
-
-    # Application de la fonction de mise en forme au DataFrame
-    styled_df_ = df_.style.apply(highlighter, axis=1)
-
-    # Affichage du DataFrame stylisé
-    try : 
-        styled_df_.to_excel("df_color.xlsx",index=False)
-        #os.startfile("df_color.xlsx")
-    except PermissionError :
-        print("Le fichier est déjà ouvert.")
-
-    '''
-
     # Supprimer les lignes où la col 'cleaned' contient une liste vide
     df_ = df_[df_['cleaned'].apply(lambda x: len(x) > 0)]
 
@@ -328,7 +282,6 @@ def visualisation(df, genre, lstage=None, lnom=None):
     df_ = df_[df_['label']!='note'] 
 
     # A ce stade df_ est complètement nettoyé
-    df_.head()
 
     # Liste des éléments de structure
     col_cleaned_struct = df_.loc[df_['label'] == 'structure', 'cleaned']
@@ -347,13 +300,10 @@ def visualisation(df, genre, lstage=None, lnom=None):
     # on supprime les éléments à une lettre
     lstruct = [i for i in lstruct if len(i)>1]
 
-    lstruct[0:20]
-
     # lstage est la liste des éléments de découpage de la pièce
     exclusion_list = ['SCÈNE', 'ACTE', 'ENTRÉE', 'INTERMÈDE', 'PROLOGUE', 'ÉGLOGUE']
     if lstage is None:
         lstage = [i for i in lstruct if any(excl in i for excl in exclusion_list)]
-    lstage
 
     # lnom est la liste des noms
     exclusion_list = ['SCÈNE', 'ACTE', 'ENTRÉE', 'INTERMÈDE', 'PROLOGUE', 'ÉGLOGUE']
@@ -368,13 +318,11 @@ def visualisation(df, genre, lstage=None, lnom=None):
     # ## 1-Cleaning
 
     # A cde stade les listes ont été transformées en strings
-    df_.head()
 
     # ## 2-Extraction des données
 
     # Création d'un tableau réduit aux lignes étapes et personnages
     # On remplit de lignes data en in itèrant sur le DataFrame df_ en utilisant iterrows()
-    #print('lnom avant', lnom)
     data =  [['Index', 'Acte', 'Scène', 'Personnage', 'Nb de mots']] + [
         [index, nom, 0, 0, 0]
         for index, row in df_.iterrows()
@@ -452,38 +400,6 @@ def visualisation(df, genre, lstage=None, lnom=None):
         except :
             continue
 
-    #on va colorer les lignes caractéristiques détectées et voir ce que ça donne sur un doc excel
-    data = data.copy()
-    # Indices des lignes à colorer
-    indices_to_color = [data[r][0] for r in range(1, len(data))]
-
-    # Création de la fonction de mise en forme pour colorer les lignes spécifiques
-    '''
-    def highlighter(row):
-        if row.name in indices_to_color:
-            return ['background-color: yellow'] * len(row)
-        elif row.name not in indices_to_color:
-            return ['background-color: green'] * len(row)
-        else:
-            return [''] * len(row) 
-
-    # Application de la fonction de mise en forme au DataFrame
-    styled_df_ = df_.style.apply(highlighter, axis=1)
-
-    # Affichage du DataFrame stylisé
-    try :    
-        styled_df_.to_excel("df_color.xlsx",index=False)
-        #os.startfile("df_color.xlsx")
-    except PermissionError :
-        print("Le fichier est déjà ouvert.")
-
-
-    # In[41]:
-
-
-    # Eventuellement on peut corriger certaines chose et recommencer à 0
-    df_corrected = pd.read_excel('df_color.xlsx')
-'''
     # Maintenant on met les actes et les scènes dans les lignes au même niveau que les personnages dans data_
     for r in range(1, len(data)):
         if data[r][1] != 0:
