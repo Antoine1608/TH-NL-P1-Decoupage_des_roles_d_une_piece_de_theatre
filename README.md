@@ -31,7 +31,7 @@ Prérequis :
 
 <img width="633" alt="image" src="https://github.com/Antoine1608/TH-NL-P1-decoupage_des_roles_d_une_piece_de_theatre/assets/75375490/97278232-0928-4e58-a8b7-22c47509ed10">
 
-8-Parmi les personnages mentionnés sur le graphe, sélectionnez ceux qui vous intéresse et entrez les dans une liste comme ceci par exemple (attention, respectez bien le format) :
+8-Parmi les personnages mentionnés sur le graphe, sélectionnez ceux qui vous intéressent et entrez les dans une liste comme ceci par exemple (attention, respectez bien le format) :
 
 <img width="644" alt="image" src="https://github.com/Antoine1608/TH-NL-P1-decoupage_des_roles_d_une_piece_de_theatre/assets/75375490/3ee14e3f-19ae-43d0-88fe-aae2fc03c380">
 
